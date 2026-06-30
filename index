@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вкусная Традиция</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root{
+  --cream:#FBF3E6; --ink:#2A1B12; --borscht:#A8341F; --mustard:#D9A441;
+  --sage:#6B7A4F; --board:#23201B; --chalk:#F2EADC; --line:#E3D6C0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;padding-bottom:40px;}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:700;}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+nav{position:sticky;top:0;z-index:50;background:var(--cream);border-bottom:2px solid var(--ink);}
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:980px;margin:0 auto;flex-wrap:wrap;gap:10px;}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:22px;letter-spacing:-0.5px;}
+.logo span{color:var(--borscht);}
+.navlinks{display:flex;gap:4px;flex-wrap:wrap;}
+.navlinks button{font-family:'Inter';font-size:14px;font-weight:600;background:none;border:none;padding:8px 14px;border-radius:20px;cursor:pointer;color:var(--ink);transition:.15s;}
+.navlinks button:hover{background:rgba(168,52,31,0.08);}
+.navlinks button.active{background:var(--borscht);color:var(--chalk);}
+.page{display:none;animation:fade .35s ease;}
+.page.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.hero{padding:56px 0 20px;text-align:center;}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--borscht);margin-bottom:10px;}
+.hero h1{font-size:clamp(34px,6vw,56px);line-height:1.05;margin-bottom:14px;white-space:pre-line;}
+.hero p{font-size:17px;color:#5b4a3c;max-width:520px;margin:0 auto;}
+.board-toolbar{display:flex;justify-content:flex-end;margin:18px 0 -8px;}
+.cart-btn{background:var(--mustard);color:var(--ink);border:none;padding:10px 18px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer;}
+.board{background:var(--board);color:var(--chalk);border-radius:14px;padding:32px 28px;margin:36px 0;box-shadow:0 14px 0 -4px rgba(0,0,0,0.08), 0 20px 40px rgba(0,0,0,0.18);position:relative;}
+.board::before{content:"";position:absolute;inset:0;border-radius:14px;background:repeating-linear-gradient(0deg,rgba(255,255,255,0.015) 0px,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 3px);pointer-events:none;}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+.board-head h2{font-family:'Caveat',cursive;font-size:38px;color:var(--chalk);}
+.board-date{font-family:'Inter';font-size:13px;color:var(--mustard);text-transform:uppercase;letter-spacing:1px;}
+.dish{display:flex;gap:16px;align-items:center;padding:16px 0;border-bottom:1px dashed rgba(255,255,255,0.18);}
+.dish:last-child{border-bottom:none;}
+.dish.selected{background:rgba(217,164,65,0.08);border-radius:10px;padding-left:10px;padding-right:10px;}
+.dish img{width:74px;height:74px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#3a342b;}
+.dish-info{flex:1;min-width:0;}
+.dish-name{font-family:'Caveat',cursive;font-size:25px;color:var(--chalk);line-height:1.1;}
+.dish-desc{font-size:13px;color:#bfb6a6;margin-top:2px;}
+.dish-price{font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--mustard);white-space:nowrap;}
+.dish-btn{margin-left:10px;background:var(--borscht);color:#fff;border:none;padding:9px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;}
+.dish-btn:hover{background:#8c2b19;}
+.dish-btn.added{background:var(--sage);}
+.empty-board{color:#8a8074;font-style:italic;padding:20px 0;text-align:center;}
+.float-bar{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:14px 22px;border-radius:30px;display:flex;align-items:center;gap:16px;box-shadow:0 10px 30px rgba(0,0,0,0.25);z-index:80;transition:transform .25s ease;}
+.float-bar.show{transform:translateX(-50%) translateY(0);}
+.float-bar button{background:var(--mustard);color:var(--ink);border:none;padding:8px 16px;border-radius:20px;font-weight:700;font-size:13px;cursor:pointer;}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;white-space:pre-line;line-height:1.7;}
+.section-title{font-size:26px;margin:40px 0 18px;}
+.muted{color:#7a6b5c;font-size:14px;}
+.review{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:12px;}
+.review-top{display:flex;justify-content:space-between;font-weight:600;margin-bottom:6px;}
+.stars{color:var(--mustard);}
+.review-form{display:flex;flex-direction:column;gap:10px;margin-top:18px;}
+input,textarea,select{font-family:'Inter';font-size:14px;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);width:100%;}
+textarea{resize:vertical;min-height:70px;}
+.btn{background:var(--ink);color:var(--cream);border:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:.15s;}
+.btn:hover{opacity:.85;}
+.btn-outline{background:none;border:1px solid var(--ink);color:var(--ink);}
+.btn-accept{background:var(--sage);color:#fff;}
+.btn-reject{background:var(--borscht);color:#fff;}
+.btn-small{padding:7px 13px;font-size:13px;border-radius:7px;}
+.status-box{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.status-pill{display:inline-block;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;width:fit-content;}
+.s-new{background:#FFF1D6;color:#8a6210;}
+.s-accept{background:#E4EBDA;color:#46582c;}
+.s-reject{background:#F7E1DC;color:#8a2c1a;}
+.s-done{background:#DCE9F0;color:#235066;}
+.overlay{position:fixed;inset:0;background:rgba(20,15,10,0.55);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+.overlay.active{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:28px;max-width:440px;width:100%;max-height:86vh;overflow:auto;}
+.modal h3{margin-bottom:14px;}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#999;}
+.cart-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
+.cart-total{display:flex;justify-content:space-between;font-weight:700;padding-top:10px;}
+footer{margin-top:60px;border-top:2px solid var(--ink);padding:30px 0;text-align:center;color:#7a6b5c;font-size:13px;}
+.staff-link{margin-top:10px;}
+.staff-link button{background:none;border:none;color:#b3a796;font-size:12px;cursor:pointer;text-decoration:underline;}
+.admin-warning{max-width:480px;margin:50px auto 24px;background:#FFF1D6;border:1px solid #E8C77D;border-radius:12px;padding:18px 20px;font-size:14px;line-height:1.6;color:#6b4f10;}
+.admin-login{max-width:340px;margin:10px auto 60px;text-align:center;}
+.admin-bar{display:flex;justify-content:space-between;align-items:center;margin:30px 0 10px;flex-wrap:wrap;gap:10px;}
+.admin-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.admin-tabs button{padding:8px 16px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:13px;font-weight:600;}
+.admin-tabs button.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.admin-panel{display:none;}
+.admin-panel.active{display:block;}
+.menu-row{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px;}
+.menu-row img{width:54px;height:54px;border-radius:8px;object-fit:cover;}
+.menu-row .grow{flex:1;}
+.menu-row .name{font-weight:600;}
+.req-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:10px;}
+.req-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
+.req-items{font-size:13px;color:#5b4a3c;margin:6px 0;}
+.add-form{background:#fff;border:1px dashed var(--line);border-radius:10px;padding:16px;margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.add-form input{font-size:13px;}
+.add-form .full{grid-column:1/-1;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 22px;border-radius:30px;font-size:14px;z-index:200;opacity:0;transition:.3s;pointer-events:none;}
+.toast.show{opacity:1;}
+.subhead{font-size:16px;margin:22px 0 10px;font-weight:700;}
+.field-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7a6b5c;margin:14px 0 6px;}
+.field-label:first-child{margin-top:0;}
+.edit-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;}
+.shift-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:18px;}
+.shift-status{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.shift-dot{width:10px;height:10px;border-radius:50%;background:#bbb;}
+.shift-dot.open{background:var(--sage);}
+.shift-times{font-size:13px;color:#7a6b5c;margin-bottom:14px;}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin:14px 0 10px;font-size:14px;}
+.checkbox-row input{width:auto;}
+.auto-times{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:600px){.add-form,.auto-times{grid-template-columns:1fr;}.dish{flex-wrap:wrap;}.dish-btn{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="navbar">
+    <div class="logo">Вкусная <span>Традиция</span></div>
+    <div class="navlinks" id="navlinks"></div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="eyebrow" id="home-eyebrow"></div>
+      <h1 id="home-title"></h1>
+      <p id="home-subtitle"></p>
+    </div>
+    <div class="board-toolbar"><button class="cart-btn" onclick="showPage('menu')">🍽 Сделать предзаказ</button></div>
+    <div class="board" id="home-board"><div class="empty-board">Загрузка меню...</div></div>
+  </div>
+
+  <div class="page" id="page-menu">
+    <h2 class="section-title">Меню на сегодня</h2>
+    <p class="muted">Нажмите «Добавить» у нужных блюд — можно выбрать сразу несколько — и оформите одну заявку.</p>
+    <div class="board" id="menu-board" style="margin-top:20px;"><div class="empty-board">Загрузка меню...</div></div>
+  </div>
+
+  <div class="page" id="page-about">
+    <h2 class="section-title">О нас</h2>
+    <div class="card" id="about-text"></div>
+  </div>
+
+  <div class="page" id="page-reviews">
+    <h2 class="section-title">Отзывы</h2>
+    <div id="reviews-list"></div>
+    <div class="card" style="white-space:normal;">
+      <h3 style="font-size:16px;margin-bottom:10px;">Оставить отзыв</h3>
+      <div class="review-form">
+        <input id="rev-name" placeholder="Ваше имя">
+        <select id="rev-stars">
+          <option value="5">★★★★★</option>
+          <option value="4">★★★★☆</option>
+          <option value="3">★★★☆☆</option>
+        </select>
+        <textarea id="rev-text" placeholder="Ваш отзыв..."></textarea>
+        <button class="btn" onclick="submitReview()">Отправить отзыв</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-contacts">
+    <h2 class="section-title">Контакты и поддержка</h2>
+    <div class="card" id="contacts-info" style="margin-bottom:16px;"></div>
+    <div class="card" style="white-space:normal;">
+      <h3 style="font-size:16px;margin-bottom:10px;">Написать в поддержку</h3>
+      <div class="review-form">
+        <input id="sup-name" placeholder="Ваше имя">
+        <input id="sup-contact" placeholder="Телефон или email">
+        <textarea id="sup-text" placeholder="Опишите вопрос..."></textarea>
+        <button class="btn" onclick="submitSupport()">Отправить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-status">
+    <h2 class="section-title">Статус моей заявки</h2>
+    <div class="card" style="white-space:normal;">
+      <div class="review-form">
+        <input id="status-name" placeholder="Имя, как указывали в заявке">
+        <input id="status-phone" placeholder="Телефон, как указывали в заявке">
+        <button class="btn" onclick="checkStatus()">Найти заявку</button>
+      </div>
+      <div class="status-box" id="status-results"></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-admin">
+    <div class="admin-warning">
+      ⚠️ <strong>Админ-панель — только для администраторов.</strong><br>
+      Если вы не являетесь сотрудником «Вкусной Традиции», просьба покинуть данный раздел и вернуться на сайт.
+    </div>
+    <div id="admin-login-block" class="admin-login">
+      <h2 style="margin-bottom:10px;">Вход для персонала</h2>
+      <input id="admin-email" placeholder="Email" style="margin-bottom:10px;">
+      <input id="admin-pass" type="password" placeholder="Пароль" style="margin-bottom:10px;">
+      <button class="btn" style="width:100%;" onclick="adminLogin()">Войти</button>
+      <div style="margin-top:14px;"><button class="btn btn-outline btn-small" onclick="showPage('home')">← Вернуться на сайт</button></div>
+    </div>
+
+    <div id="admin-panel-block" style="display:none;">
+      <div class="admin-bar">
+        <h2 style="margin:0;">Админ-панель</h2>
+        <button class="btn btn-outline btn-small" onclick="adminLogout()">Выйти</button>
+      </div>
+
+      <div class="shift-card">
+        <div class="shift-status"><span class="shift-dot" id="shift-dot"></span><strong id="shift-label">Смена закрыта</strong></div>
+        <div class="shift-times" id="shift-times"></div>
+        <div id="shift-buttons"></div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="auto-shift-check" onchange="toggleAutoShift()">
+          <label for="auto-shift-check">Автоматическое начало и окончание смены</label>
+        </div>
+        <div class="auto-times" id="auto-times-block" style="display:none;">
+          <div><label class="muted">Начало смены</label><input type="time" id="auto-start"></div>
+          <div><label class="muted">Окончание смены</label><input type="time" id="auto-end"></div>
+        </div>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="active" data-atab="menu" onclick="switchAdminTab('menu')">Меню дня</button>
+        <button data-atab="orders" onclick="switchAdminTab('orders')">Заявки <span id="orders-badge"></span></button>
+        <button data-atab="reviews" onclick="switchAdminTab('reviews')">Отзывы</button>
+        <button data-atab="support" onclick="switchAdminTab('support')">Поддержка</button>
+        <button data-atab="home" onclick="switchAdminTab('home')">Главная</button>
+        <button data-atab="about" onclick="switchAdminTab('about')">О нас</button>
+        <button data-atab="contacts" onclick="switchAdminTab('contacts')">Контакты</button>
+      </div>
+
+      <div class="admin-panel active" id="atab-menu">
+        <div id="admin-menu-list"></div>
+        <div class="add-form">
+          <input id="new-dish-name" placeholder="Название блюда" class="full">
+          <input id="new-dish-desc" placeholder="Короткое описание" class="full">
+          <input id="new-dish-price" placeholder="Цена, BYN">
+          <input id="new-dish-img" placeholder="Ссылка на фото (необязательно)">
+          <button class="btn full" style="grid-column:1/-1;" onclick="addDish()">+ Добавить блюдо в меню</button>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="atab-orders">
+        <div class="subhead">Активные заявки</div>
+        <div id="admin-orders-list"></div>
+        <div class="subhead">Сделанные заявки (за смену)</div>
+        <div id="admin-done-list"></div>
+      </div>
+
+      <div class="admin-panel" id="atab-reviews"><div id="admin-reviews-list"></div></div>
+      <div class="admin-panel" id="atab-support"><div id="admin-support-list"></div></div>
+
+      <div class="admin-panel" id="atab-home">
+        <div class="edit-card">
+          <div class="field-label">Надпись над заголовком</div>
+          <input id="edit-home-eyebrow">
+          <div class="field-label">Заголовок (главный, крупный)</div>
+          <textarea id="edit-home-title" style="min-height:60px;"></textarea>
+          <div class="field-label">Подзаголовок / текст под заголовком</div>
+          <textarea id="edit-home-subtitle"></textarea>
+          <button class="btn" style="margin-top:14px;" onclick="saveHome()">Сохранить изменения</button>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="atab-about">
+        <div class="edit-card">
+          <div class="field-label">Текст страницы «О нас»</div>
+          <textarea id="edit-about" style="min-height:160px;"></textarea>
+          <button class="btn" style="margin-top:14px;" onclick="saveAbout()">Сохранить изменения</button>
+        </div>
+      </div>
+
+      <div class="admin-panel" id="atab-contacts">
+        <div class="edit-card">
+          <div class="field-label">Телефон</div><input id="edit-phone">
+          <div class="field-label">Адрес</div><input id="edit-address">
+          <div class="field-label">Часы работы</div><input id="edit-hours">
+          <button class="btn" style="margin-top:14px;" onclick="saveContacts()">Сохранить изменения</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="float-bar" id="float-bar">
+  <span id="float-bar-text">Выбрано: 0</span>
+  <button onclick="openCartModal()">Оформить</button>
+</div>
+
+<footer>
+  © 2026 ООО «Алмалекс»
+  <div class="staff-link"><button onclick="showPage('admin')">Вход для персонала</button></div>
+</footer>
+
+<div class="overlay" id="order-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeOrderModal()">×</button>
+    <h3>Оформление предзаказа</h3>
+    <div id="cart-items"></div>
+    <div class="cart-total"><span>Итого</span><span id="cart-total-sum">0 BYN</span></div>
+    <div class="review-form">
+      <input id="order-name" placeholder="Ваше имя">
+      <input id="order-phone" placeholder="Телефон">
+      <input id="order-date" type="date">
+      <input id="order-time" type="time">
+      <button class="btn" onclick="submitOrder()">Отправить заявку</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// ====== ПОДКЛЮЧЕНИЕ К SUPABASE ======
+const SUPABASE_URL = "https://fqjpknosdpjmegmafmal.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZxanBrbm9zZHBqbWVnbWFmbWFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4MTQ4NjcsImV4cCI6MjA5ODM5MDg2N30.CjpGftl1UVmD9Uwg7P6lWtN7NHrPM_khx2jofmKv-Ig";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CUR = "BYN";
+function money(v){ return Number(v).toFixed(2).replace('.', ',') + ' ' + CUR; }
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ====== NAV ======
+const pages = [
+  {id:'home', label:'Главная'}, {id:'menu', label:'Меню'}, {id:'about', label:'О нас'},
+  {id:'reviews', label:'Отзывы'}, {id:'contacts', label:'Поддержка'}, {id:'status', label:'Моя заявка'}
+];
+const navlinks = document.getElementById('navlinks');
+pages.forEach(p=>{
+  const b = document.createElement('button');
+  b.textContent = p.label; b.onclick = ()=>showPage(p.id); b.dataset.nav = p.id;
+  navlinks.appendChild(b);
+});
+function showPage(id){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('active', b.dataset.nav===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='reviews') loadReviews();
+}
+
+// ====== ЗАГРУЗКА КОНТЕНТА СТРАНИЦ ======
+async function loadContent(){
+  const { data, error } = await sb.from('site_content').select('*');
+  if(error){ console.error(error); return; }
+  const map = {}; data.forEach(r=>map[r.key]=r.value);
+  document.getElementById('home-eyebrow').textContent = map.home_eyebrow || '';
+  document.getElementById('home-title').textContent = map.home_title || '';
+  document.getElementById('home-subtitle').textContent = map.home_subtitle || '';
+  document.getElementById('about-text').textContent = map.about_text || '';
+  document.getElementById('contacts-info').innerHTML =
+    `<strong>Телефон:</strong> ${map.contact_phone||''}\n<strong>Адрес:</strong> ${map.contact_address||''}\n<strong>Часы работы:</strong> ${map.contact_hours||''}`;
+  window._contentMap = map;
+}
+
+// ====== МЕНЮ / БЛЮДА ======
+let dishes = [];
+let selectedIds = new Set();
+function todayStr(){ return new Date().toLocaleDateString('ru-RU', {day:'numeric', month:'long', weekday:'long'}); }
+
+async function loadDishes(){
+  const { data, error } = await sb.from('dishes').select('*').order('created_at');
+  if(error){ console.error(error); return; }
+  dishes = data;
+  renderBoards();
+}
+function dishRowHTML(d){
+  const isSel = selectedIds.has(d.id);
+  return `<div class="dish ${isSel?'selected':''}">
+    <img src="${d.image_url||'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=60'}" alt="">
+    <div class="dish-info"><div class="dish-name">${d.name}</div><div class="dish-desc">${d.description||''}</div></div>
+    <div class="dish-price">${money(d.price)}</div>
+    <button class="dish-btn ${isSel?'added':''}" onclick="toggleSelect(${d.id})">${isSel?'Добавлено ✓':'Добавить'}</button>
+  </div>`;
+}
+function renderBoards(){
+  const html = `<div class="board-head"><h2>Меню дня</h2><div class="board-date">${todayStr()}</div></div>` +
+    (dishes.length ? dishes.map(dishRowHTML).join('') : `<div class="empty-board">Сегодня меню ещё не опубликовано — загляните чуть позже</div>`);
+  document.getElementById('home-board').innerHTML = html;
+  document.getElementById('menu-board').innerHTML = html;
+  updateFloatBar();
+}
+function toggleSelect(id){
+  if(selectedIds.has(id)) selectedIds.delete(id); else selectedIds.add(id);
+  renderBoards();
+}
+function updateFloatBar(){
+  const bar = document.getElementById('float-bar');
+  const n = selectedIds.size;
+  document.getElementById('float-bar-text').textContent = `Выбрано: ${n} ${n===1?'блюдо':'блюда(а)'}`;
+  bar.classList.toggle('show', n>0);
+}
+
+// ====== ПРЕДЗАКАЗ ======
+function openCartModal(){
+  if(selectedIds.size===0){toast('Сначала выберите блюда в меню'); return;}
+  const items = dishes.filter(d=>selectedIds.has(d.id));
+  document.getElementById('cart-items').innerHTML = items.map(d=>`<div class="cart-item"><span>${d.name}</span><span>${money(d.price)}</span></div>`).join('');
+  document.getElementById('cart-total-sum').textContent = money(items.reduce((s,d)=>s+Number(d.price),0));
+  document.getElementById('order-name').value=''; document.getElementById('order-phone').value='';
+  document.getElementById('order-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('order-time').value='';
+  document.getElementById('order-overlay').classList.add('active');
+}
+function closeOrderModal(){document.getElementById('order-overlay').classList.remove('active');}
+async function submitOrder(){
+  const name = document.getElementById('order-name').value.trim();
+  const phone = document.getElementById('order-phone').value.trim();
+  const date = document.getElementById('order-date').value;
+  const time = document.getElementById('order-time').value;
+  if(!name || !phone || !date || !time){toast('Заполните все поля'); return;}
+  const items = dishes.filter(d=>selectedIds.has(d.id)).map(d=>({name:d.name, price:Number(d.price)}));
+  const total = items.reduce((s,d)=>s+d.price,0);
+  const { error } = await sb.from('orders').insert({
+    items, total, customer_name:name, customer_phone:phone, pickup_date:date, pickup_time:time, status:'new'
+  });
+  if(error){ toast('Ошибка отправки заявки'); console.error(error); return; }
+  selectedIds.clear(); closeOrderModal(); renderBoards();
+  toast('Заявка отправлена! Следить за статусом можно во вкладке «Моя заявка»');
+}
+
+// ====== СТАТУС ЗАЯВКИ ======
+async function checkStatus(){
+  const name = document.getElementById('status-name').value.trim();
+  const phone = document.getElementById('status-phone').value.trim();
+  const box = document.getElementById('status-results');
+  if(!name || !phone){ box.innerHTML = '<p class="muted">Введите имя и телефон</p>'; return; }
+  const { data, error } = await sb.from('orders').select('*').ilike('customer_name', name).eq('customer_phone', phone).order('created_at',{ascending:false});
+  if(error || !data || !data.length){ box.innerHTML = '<p class="muted">Заявок не найдено. Проверьте имя и телефон.</p>'; return; }
+  const map = {new:['s-new','На рассмотрении'], accepted:['s-accept','Принята, готовим'], rejected:['s-reject','Отклонена'], done:['s-done','Заказ выдан']};
+  box.innerHTML = data.map(o=>{
+    const [cls,label] = map[o.status];
+    return `<div class="req-card"><strong>${o.items.map(i=>i.name).join(', ')}</strong><br>
+      <span class="muted">к ${o.pickup_date}, ${o.pickup_time} · ${money(o.total)}</span><br>
+      <span class="status-pill ${cls}">${label}</span></div>`;
+  }).join('');
+}
+
+// ====== ОТЗЫВЫ ======
+async function loadReviews(){
+  const { data, error } = await sb.from('reviews').select('*').order('created_at',{ascending:false});
+  if(error){ console.error(error); return; }
+  document.getElementById('reviews-list').innerHTML = data.map(r=>`
+    <div class="review"><div class="review-top"><span>${r.name}</span><span class="stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span></div><div>${r.text}</div></div>`
+  ).join('') || '<p class="muted">Пока отзывов нет</p>';
+}
+async function submitReview(){
+  const name = document.getElementById('rev-name').value.trim();
+  const stars = parseInt(document.getElementById('rev-stars').value);
+  const text = document.getElementById('rev-text').value.trim();
+  if(!name || !text){toast('Заполните имя и отзыв'); return;}
+  const { error } = await sb.from('reviews').insert({name, stars, text});
+  if(error){ toast('Ошибка отправки'); return; }
+  document.getElementById('rev-name').value=''; document.getElementById('rev-text').value='';
+  loadReviews(); toast('Спасибо за отзыв!');
+}
+
+// ====== ПОДДЕРЖКА ======
+async function submitSupport(){
+  const name = document.getElementById('sup-name').value.trim();
+  const contact = document.getElementById('sup-contact').value.trim();
+  const text = document.getElementById('sup-text').value.trim();
+  if(!name || !contact || !text){toast('Заполните все поля'); return;}
+  const { error } = await sb.from('support_messages').insert({name, contact, text});
+  if(error){ toast('Ошибка отправки'); return; }
+  document.getElementById('sup-name').value=''; document.getElementById('sup-contact').value=''; document.getElementById('sup-text').value='';
+  toast('Сообщение отправлено в поддержку');
+}
+
+// ====== АДМИНКА: ВХОД ======
+async function adminLogin(){
+  const email = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-pass').value;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){ toast('Неверный email или пароль'); return; }
+  document.getElementById('admin-login-block').style.display='none';
+  document.getElementById('admin-panel-block').style.display='block';
+  loadAdminMenu(); loadAdminOrders(); loadAdminReviews(); loadAdminSupport(); loadShift(); fillEditForms();
+}
+async function adminLogout(){
+  await sb.auth.signOut();
+  document.getElementById('admin-pass').value='';
+  document.getElementById('admin-login-block').style.display='block';
+  document.getElementById('admin-panel-block').style.display='none';
+}
+function switchAdminTab(tab){
+  document.querySelectorAll('.admin-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.atab===tab));
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('atab-'+tab).classList.add('active');
+}
+
+// ====== АДМИНКА: МЕНЮ ======
+async function loadAdminMenu(){
+  const { data, error } = await sb.from('dishes').select('*').order('created_at');
+  if(error){ console.error(error); return; }
+  dishes = data;
+  document.getElementById('admin-menu-list').innerHTML = dishes.map(d=>`
+    <div class="menu-row">
+      <img src="${d.image_url||'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=60'}">
+      <div class="grow"><div class="name">${d.name}</div><div class="muted">${d.description||''} · ${money(d.price)}</div></div>
+      <button class="btn btn-outline btn-small" onclick="removeDish(${d.id})">Убрать</button>
+    </div>`).join('') || '<p class="muted">Меню пустое — добавьте блюдо ниже</p>';
+}
+async function addDish(){
+  const name = document.getElementById('new-dish-name').value.trim();
+  const desc = document.getElementById('new-dish-desc').value.trim();
+  const price = parseFloat(document.getElementById('new-dish-price').value.replace(',','.')) || 0;
+  const img = document.getElementById('new-dish-img').value.trim();
+  if(!name || !price){toast('Укажите хотя бы название и цену'); return;}
+  const { error } = await sb.from('dishes').insert({name, description:desc, price, image_url:img||null});
+  if(error){ toast('Ошибка добавления'); console.error(error); return; }
+  ['new-dish-name','new-dish-desc','new-dish-price','new-dish-img'].forEach(id=>document.getElementById(id).value='');
+  loadAdminMenu(); loadDishes();
+  toast('Блюдо добавлено в меню дня');
+}
+async function removeDish(id){
+  const { error } = await sb.from('dishes').delete().eq('id', id);
+  if(error){ toast('Ошибка удаления'); return; }
+  selectedIds.delete(id);
+  loadAdminMenu(); loadDishes();
+  toast('Блюдо убрано из меню');
+}
+
+// ====== АДМИНКА: ЗАЯВКИ ======
+async function loadAdminOrders(){
+  const { data, error } = await sb.from('orders').select('*').order('created_at',{ascending:false});
+  if(error){ console.error(error); return; }
+  const active = data.filter(o=>o.status==='new'||o.status==='accepted');
+  const done = data.filter(o=>o.status==='done');
+  const newCount = data.filter(o=>o.status==='new').length;
+  document.getElementById('orders-badge').textContent = newCount ? `(${newCount})` : '';
+
+  document.getElementById('admin-orders-list').innerHTML = active.map(o=>{
+    const map = {new:['s-new','Новая'], accepted:['s-accept','Принята']};
+    const [cls,label] = map[o.status];
+    return `<div class="req-card">
+      <div class="req-top"><strong>${o.customer_name} · ${o.customer_phone}</strong><span class="status-pill ${cls}">${label}</span></div>
+      <div class="req-items">${o.items.map(i=>i.name).join(', ')} — ${money(o.total)}</div>
+      <div class="muted">К ${o.pickup_date}, ${o.pickup_time}</div>
+      ${o.status==='new' ? `<div style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-accept btn-small" onclick="setOrderStatus(${o.id},'accepted')">Принять</button>
+        <button class="btn btn-reject btn-small" onclick="setOrderStatus(${o.id},'rejected')">Отказать</button>
+      </div>` : `<div style="margin-top:10px;"><div class="muted" style="margin-bottom:6px;">Заказ забрали?</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-accept btn-small" onclick="setOrderStatus(${o.id},'done')">Да</button>
+          <button class="btn btn-outline btn-small" onclick="toast('Хорошо, ждём клиента')">Нет</button>
+        </div></div>`}
+    </div>`;
+  }).join('') || '<p class="muted">Активных заявок нет</p>';
+
+  document.getElementById('admin-done-list').innerHTML = done.map(o=>`
+    <div class="req-card"><div class="req-top"><strong>${o.customer_name} · ${o.customer_phone}</strong><span class="status-pill s-done">Выдан</span></div>
+    <div class="req-items">${o.items.map(i=>i.name).join(', ')} — ${money(o.total)}</div></div>`).join('') || '<p class="muted">Пока нет выданных заказов за эту смену</p>';
+}
+async function setOrderStatus(id, status){
+  const { error } = await sb.from('orders').update({status}).eq('id', id);
+  if(error){ toast('Ошибка обновления'); return; }
+  loadAdminOrders();
+  toast(status==='accepted' ? 'Заявка принята' : status==='done' ? 'Отмечено — заказ выдан' : 'Заявка отклонена');
+}
+
+// ====== АДМИНКА: ОТЗЫВЫ / ПОДДЕРЖКА ======
+async function loadAdminReviews(){
+  const { data, error } = await sb.from('reviews').select('*').order('created_at',{ascending:false});
+  if(error){ console.error(error); return; }
+  document.getElementById('admin-reviews-list').innerHTML = data.map(r=>`
+    <div class="req-card"><div class="req-top"><strong>${r.name}</strong><span class="stars">${'★'.repeat(r.stars)}</span></div><div>${r.text}</div>
+    <button class="btn btn-outline btn-small" style="margin-top:8px;" onclick="removeReview(${r.id})">Скрыть отзыв</button></div>`).join('') || '<p class="muted">Отзывов нет</p>';
+}
+async function removeReview(id){
+  const { error } = await sb.from('reviews').delete().eq('id', id);
+  if(error){ toast('Ошибка удаления'); return; }
+  loadAdminReviews(); loadReviews();
+  toast('Отзыв скрыт');
+}
+async function loadAdminSupport(){
+  const { data, error } = await sb.from('support_messages').select('*').order('created_at',{ascending:false});
+  if(error){ console.error(error); return; }
+  document.getElementById('admin-support-list').innerHTML = data.map(s=>`
+    <div class="req-card"><div class="req-top"><strong>${s.name}</strong><span class="muted">${s.contact}</span></div><div>${s.text}</div></div>`).join('') || '<p class="muted">Обращений пока нет</p>';
+}
+
+// ====== АДМИНКА: РЕДАКТИРОВАНИЕ КОНТЕНТА ======
+function fillEditForms(){
+  const m = window._contentMap || {};
+  document.getElementById('edit-home-eyebrow').value = m.home_eyebrow||'';
+  document.getElementById('edit-home-title').value = m.home_title||'';
+  document.getElementById('edit-home-subtitle').value = m.home_subtitle||'';
+  document.getElementById('edit-about').value = m.about_text||'';
+  document.getElementById('edit-phone').value = m.contact_phone||'';
+  document.getElementById('edit-address').value = m.contact_address||'';
+  document.getElementById('edit-hours').value = m.contact_hours||'';
+}
+async function upsertContent(key, value){
+  return sb.from('site_content').upsert({key, value});
+}
+async function saveHome(){
+  await upsertContent('home_eyebrow', document.getElementById('edit-home-eyebrow').value);
+  await upsertContent('home_title', document.getElementById('edit-home-title').value);
+  await upsertContent('home_subtitle', document.getElementById('edit-home-subtitle').value);
+  loadContent(); toast('Главная страница обновлена');
+}
+async function saveAbout(){
+  await upsertContent('about_text', document.getElementById('edit-about').value);
+  loadContent(); toast('Страница «О нас» обновлена');
+}
+async function saveContacts(){
+  await upsertContent('contact_phone', document.getElementById('edit-phone').value);
+  await upsertContent('contact_address', document.getElementById('edit-address').value);
+  await upsertContent('contact_hours', document.getElementById('edit-hours').value);
+  loadContent(); toast('Контакты обновлены');
+}
+
+// ====== АДМИНКА: СМЕНА ======
+async function loadShift(){
+  const { data, error } = await sb.from('shift').select('*').eq('id',1).single();
+  if(error){ console.error(error); return; }
+  window._shift = data;
+  renderShift();
+}
+function renderShift(){
+  const s = window._shift; if(!s) return;
+  document.getElementById('shift-dot').classList.toggle('open', s.is_open);
+  document.getElementById('shift-label').textContent = s.is_open ? 'Смена открыта' : 'Смена закрыта';
+  let times = '';
+  if(s.opened_at) times += `Открыта: ${new Date(s.opened_at).toLocaleString('ru-RU',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})}`;
+  if(s.closed_at) times += (times?' · ':'') + `Закрыта: ${new Date(s.closed_at).toLocaleString('ru-RU',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})}`;
+  document.getElementById('shift-times').textContent = times || 'Смена ещё не открывалась сегодня';
+  document.getElementById('shift-buttons').innerHTML = s.auto_mode
+    ? `<p class="muted">Управляется автоматически по расписанию ниже</p>`
+    : (s.is_open ? `<button class="btn btn-reject btn-small" onclick="closeShift()">Закрыть смену</button>`
+                 : `<button class="btn btn-accept btn-small" onclick="openShift()">Открыть смену</button>`);
+  document.getElementById('auto-shift-check').checked = s.auto_mode;
+  document.getElementById('auto-times-block').style.display = s.auto_mode ? 'grid' : 'none';
+  document.getElementById('auto-start').value = s.auto_start ? s.auto_start.slice(0,5) : '09:00';
+  document.getElementById('auto-end').value = s.auto_end ? s.auto_end.slice(0,5) : '21:00';
+}
+async function openShift(){
+  await sb.from('shift').update({is_open:true, opened_at:new Date().toISOString(), closed_at:null}).eq('id',1);
+  loadShift(); toast('Смена открыта');
+}
+async function closeShift(){
+  await sb.from('shift').update({is_open:false, closed_at:new Date().toISOString()}).eq('id',1);
+  // очищаем выданные заказы за смену
+  const { data } = await sb.from('orders').select('id').eq('status','done');
+  if(data && data.length){
+    const ids = data.map(o=>o.id);
+    await sb.from('orders').delete().in('id', ids);
+  }
+  loadAdminOrders(); loadShift();
+  toast('Смена закрыта. Сделанные заявки очищены');
+}
+async function toggleAutoShift(){
+  const checked = document.getElementById('auto-shift-check').checked;
+  await sb.from('shift').update({auto_mode:checked}).eq('id',1);
+  loadShift();
+}
+document.getElementById('auto-start').addEventListener('change', async e=>{
+  await sb.from('shift').update({auto_start:e.target.value}).eq('id',1); loadShift();
+});
+document.getElementById('auto-end').addEventListener('change', async e=>{
+  await sb.from('shift').update({auto_end:e.target.value}).eq('id',1); loadShift();
+});
+
+// ====== СТАРТ ======
+showPage('home');
+loadContent();
+loadDishes();
+</script>
+</body>
+</html>
